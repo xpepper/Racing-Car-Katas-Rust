@@ -62,13 +62,27 @@ pub mod tire_pressure_monitoring_system {
 
     #[cfg(test)]
     mod tests {
-        use super::{Alarm, RandomPressureSensor};
+        use super::{Alarm, PressureSensor};
 
         #[test]
-        fn test_alarm() {
-            let mut alarm = Alarm::new(RandomPressureSensor::new());
+        fn alarm_is_on_when_outside_the_threshold_values() {
+            let mut alarm = Alarm::new(FakeSensor(2.0));
+            alarm.check();
+            assert_eq!(true, alarm.is_alarm_on());
+        }
+
+        #[test]
+        fn alarm_is_off_when_inside_the_threshold_values() {
+            let mut alarm = Alarm::new(FakeSensor(19.0));
             alarm.check();
             assert_eq!(false, alarm.is_alarm_on());
+        }
+
+        struct FakeSensor(f64);
+        impl PressureSensor for FakeSensor {
+            fn pop_next_pressure_psi_value(&self) -> f64 {
+                self.0
+            }
         }
     }
 }

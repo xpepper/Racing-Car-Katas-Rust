@@ -4,7 +4,7 @@ pub mod tire_pressure_monitoring_system {
     pub struct Alarm {
         low_pressure_threshold: f64,
         high_pressure_threshold: f64,
-        sensor: Sensor,
+        sensor: RandomPressureSensor,
         alarm_on: bool,
     }
 
@@ -13,7 +13,7 @@ pub mod tire_pressure_monitoring_system {
             Alarm {
                 low_pressure_threshold: 17.0,
                 high_pressure_threshold: 21.0,
-                sensor: Sensor::new(),
+                sensor: RandomPressureSensor::new(),
                 alarm_on: false,
             }
         }
@@ -33,13 +33,13 @@ pub mod tire_pressure_monitoring_system {
         }
     }
 
-    pub struct Sensor {
+    pub struct RandomPressureSensor {
         offset: f64,
     }
 
-    impl Sensor {
+    impl RandomPressureSensor {
         pub fn new() -> Self {
-            Sensor { offset: 16.0 }
+            RandomPressureSensor { offset: 16.0 }
         }
 
         pub fn pop_next_pressure_psi_value(&self) -> f64 {
@@ -61,6 +61,7 @@ pub mod tire_pressure_monitoring_system {
         #[test]
         fn test_alarm() {
             let mut alarm = Alarm::new();
+            alarm.check();
             assert_eq!(false, alarm.is_alarm_on());
         }
     }

@@ -1,19 +1,19 @@
 pub mod tire_pressure_monitoring_system {
     use rand::Rng;
 
-    pub struct Alarm {
+    pub struct Alarm<S: PressureSensor> {
         low_pressure_threshold: f64,
         high_pressure_threshold: f64,
-        sensor: RandomPressureSensor,
+        sensor: S,
         alarm_on: bool,
     }
 
-    impl Alarm {
-        pub fn new(pressure_sensor: RandomPressureSensor) -> Self {
+    impl<S: PressureSensor> Alarm<S> {
+        pub fn new(sensor: S) -> Self {
             Alarm {
                 low_pressure_threshold: 17.0,
                 high_pressure_threshold: 21.0,
-                sensor: pressure_sensor,
+                sensor,
                 alarm_on: false,
             }
         }

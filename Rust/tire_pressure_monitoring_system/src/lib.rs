@@ -1,15 +1,15 @@
 pub mod tire_pressure_monitoring_system {
     use rand::Rng;
 
-    pub struct Alarm {
+    pub struct Alarm<'a> {
         low_pressure_threshold: f64,
         high_pressure_threshold: f64,
-        sensor: Box<dyn PressureSensor>,
+        sensor: &'a dyn PressureSensor,
         alarm_on: bool,
     }
 
-    impl Alarm {
-        pub fn new(sensor: Box<dyn PressureSensor>) -> Self {
+    impl<'a> Alarm<'a> {
+        pub fn new(sensor: &'a dyn PressureSensor) -> Self {
             Alarm {
                 low_pressure_threshold: 17.0,
                 high_pressure_threshold: 21.0,
@@ -66,21 +66,21 @@ pub mod tire_pressure_monitoring_system {
 
         #[test]
         fn alarm_is_on_when_pressure_is_above_the_threshold() {
-            let mut alarm = Alarm::new(Box::new(TestablePressureSensor(300.0)));
+            let mut alarm = Alarm::new(&TestablePressureSensor(22.0));
             alarm.check();
             assert_eq!(true, alarm.is_alarm_on());
         }
 
         #[test]
         fn alarm_is_on_when_pressure_is_below_the_threshold() {
-            let mut alarm = Alarm::new(Box::new(TestablePressureSensor(1.0)));
+            let mut alarm = Alarm::new(&TestablePressureSensor(16.0));
             alarm.check();
             assert_eq!(true, alarm.is_alarm_on());
         }
 
         #[test]
         fn alarm_is_off_when_pressure_is_within_the_thresholds() {
-            let mut alarm = Alarm::new(Box::new(TestablePressureSensor(19.0)));
+            let mut alarm = Alarm::new(&TestablePressureSensor(19.0));
             alarm.check();
             assert_eq!(false, alarm.is_alarm_on());
         }

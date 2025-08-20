@@ -84,6 +84,13 @@ pub mod tire_pressure_monitoring_system {
             alarm.check();
             assert_eq!(true, alarm.is_alarm_on());
         }
+
+        #[test]
+        fn alarm_is_off_when_pressure_is_within_the_thresholds() {
+            let mut alarm = Alarm::new(ControllablePressureSensor(19.0));
+            alarm.check();
+            assert_eq!(false, alarm.is_alarm_on());
+        }
     }
 
     struct ControllablePressureSensor(f64);

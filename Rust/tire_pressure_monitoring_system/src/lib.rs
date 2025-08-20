@@ -1,15 +1,15 @@
 pub mod tire_pressure_monitoring_system {
     use rand::Rng;
 
-    pub struct Alarm<S: PressureSensor> {
+    pub struct Alarm {
         low_pressure_threshold: f64,
         high_pressure_threshold: f64,
-        sensor: S,
+        sensor: Box<dyn PressureSensor>,
         alarm_on: bool,
     }
 
-    impl<S: PressureSensor> Alarm<S> {
-        pub fn new(sensor: S) -> Self {
+    impl Alarm {
+        pub fn new(sensor: Box<dyn PressureSensor>) -> Self {
             Alarm {
                 low_pressure_threshold: 17.0,
                 high_pressure_threshold: 21.0,
@@ -62,34 +62,34 @@ pub mod tire_pressure_monitoring_system {
 
     #[cfg(test)]
     mod tests {
-        use super::{Alarm, ControllablePressureSensor};
+        use super::{Alarm, PressureSensor};
 
         #[test]
         fn alarm_is_on_when_pressure_is_above_the_threshold() {
-            let mut alarm = Alarm::new(ControllablePressureSensor(300.0));
+            let mut alarm = Alarm::new(Box::new(TestablePressureSensor(300.0)));
             alarm.check();
             assert_eq!(true, alarm.is_alarm_on());
         }
 
         #[test]
         fn alarm_is_on_when_pressure_is_below_the_threshold() {
-            let mut alarm = Alarm::new(ControllablePressureSensor(1.0));
+            let mut alarm = Alarm::new(Box::new(TestablePressureSensor(1.0)));
             alarm.check();
             assert_eq!(true, alarm.is_alarm_on());
         }
 
         #[test]
         fn alarm_is_off_when_pressure_is_within_the_thresholds() {
-            let mut alarm = Alarm::new(ControllablePressureSensor(19.0));
+            let mut alarm = Alarm::new(Box::new(TestablePressureSensor(19.0)));
             alarm.check();
             assert_eq!(false, alarm.is_alarm_on());
         }
-    }
 
-    struct ControllablePressureSensor(f64);
-    impl PressureSensor for ControllablePressureSensor {
-        fn pop_next_pressure_psi_value(&self) -> f64 {
-            self.0
+        struct TestablePressureSensor(f64);
+        impl PressureSensor for TestablePressureSensor {
+            fn pop_next_pressure_psi_value(&self) -> f64 {
+                self.0
+            }
         }
     }
 }

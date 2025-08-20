@@ -61,6 +61,7 @@ pub mod tire_pressure_monitoring_system {
         #[test]
         fn test_alarm() {
             let mut alarm = Alarm::new();
+            alarm.check();
             assert_eq!(false, alarm.is_alarm_on());
         }
     }

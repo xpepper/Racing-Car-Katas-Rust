@@ -9,11 +9,11 @@ pub mod tire_pressure_monitoring_system {
     }
 
     impl Alarm {
-        pub fn new() -> Self {
+        pub fn new(pressure_sensor: RandomPressureSensor) -> Self {
             Alarm {
                 low_pressure_threshold: 17.0,
                 high_pressure_threshold: 21.0,
-                sensor: RandomPressureSensor::new(),
+                sensor: pressure_sensor,
                 alarm_on: false,
             }
         }
@@ -62,11 +62,11 @@ pub mod tire_pressure_monitoring_system {
 
     #[cfg(test)]
     mod tests {
-        use super::{Alarm};
+        use super::{Alarm, RandomPressureSensor};
 
         #[test]
         fn test_alarm() {
-            let mut alarm = Alarm::new();
+            let mut alarm = Alarm::new(RandomPressureSensor::new());
             alarm.check();
             assert_eq!(false, alarm.is_alarm_on());
         }

@@ -42,16 +42,22 @@ pub mod tire_pressure_monitoring_system {
             RandomPressureSensor { offset: 16.0 }
         }
 
-        pub fn pop_next_pressure_psi_value(&self) -> f64 {
-            let pressure_telemetry_value = Self::sample_pressure();
-            self.offset + pressure_telemetry_value
-        }
-
         fn sample_pressure() -> f64 {
             let mut rng = rand::thread_rng();
             let pressure_telemetry_value = 6.0 * rng.gen::<f64>() * rng.gen::<f64>();
             pressure_telemetry_value
         }
+    }
+
+    impl PressureSensor for RandomPressureSensor {
+        fn pop_next_pressure_psi_value(&self) -> f64 {
+            let pressure_telemetry_value = Self::sample_pressure();
+            self.offset + pressure_telemetry_value
+        }
+    }
+
+    pub trait PressureSensor {
+        fn pop_next_pressure_psi_value(&self) -> f64;
     }
 
     #[cfg(test)]
